@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Comparison | StockPredictAI{% endblock %}
+
+{% block content %}
+
+<section class="comparison-page">
+
+    <!-- Page Heading -->
+    <div class="page-header">
+        <p class="section-label">MARKET ANALYSIS</p>
+
+        <h1>Stock <span class="green-text">Comparison</span></h1>
+
+        <p class="muted-text">
+            Compare historical market prices of two stocks.
+        </p>
+    </div>
+
+    <!-- Comparison Form -->
+    <section class="panel comparison-form-panel">
+
+        <div class="panel-heading">
+            <div>
+                <h2>Choose Your Stocks</h2>
+
+                <p class="muted-text">
+                    Enter the symbols you want to compare.
+                </p>
+            </div>
+
+            <span class="panel-icon">⚖️</span>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('comparison') }}"
+              class="comparison-form">
+
+            <div class="comparison-input-grid">
+
+                <div class="input-group">
+                    <label for="symbol1">First Stock</label>
+
+                    <input
+                        type="text"
+                        id="symbol1"
+                        name="symbol1"
+                        placeholder="Example: AAPL"
+                        maxlength="20"
+                        pattern="[A-Za-z0-9.^_-]+"
+                        required>
+
+                    <small>Example: AAPL, MSFT, RELIANCE.NS</small>
+                </div>
+
+                <div class="versus">VS</div>
+
+                <div class="input-group">
+                    <label for="symbol2">Second Stock</label>
+
+                    <input
+                        type="text"
+                        id="symbol2"
+                        name="symbol2"
+                        placeholder="Example: MSFT"
+                        maxlength="20"
+                        pattern="[A-Za-z0-9.^_-]+"
+                        required>
+
+                    <small>Choose a different stock symbol.</small>
+                </div>
+
+            </div>
+
+            <div class="input-group period-input">
+                <label for="period">Comparison Period</label>
+
+                <select id="period" name="period" required>
+                    <option value="1mo">Last 1 Month</option>
+                    <option value="3mo">Last 3 Months</option>
+                    <option value="6mo">Last 6 Months</option>
+                    <option value="1y" selected>Last 1 Year</option>
+                    <option value="2y">Last 2 Years</option>
+                </select>
+            </div>
+
+            <button type="submit" class="login-button">
+                COMPARE STOCKS <span>→</span>
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Comparison Results -->
+    {% if comparison_result %}
+
+    <section class="comparison-results">
+
+        <div class="section-heading">
+            <div>
+                <h2>Comparison Results</h2>
+
+                <p class="muted-text">
+                    Historical data for your selected stocks.
+                </p>
+            </div>
+
+            <span class="status-badge">ANALYSIS</span>
+        </div>
+
+        <div class="statistics-grid">
+
+            <article class="stat-card">
+                <p>{{ comparison_result.symbol1 }}</p>
+
+                <h3 class="green-text">
+                    {{ comparison_result.price1 }}
+                </h3>
+
+                <span class="stat-note">Latest available price</span>
+            </article>
+
+            <article class="stat-card">
+                <p>{{ comparison_result.symbol2 }}</p>
+
+                <h3 class="green-text">
+                    {{ comparison_result.price2 }}
+                </h3>
+
+                <span class="stat-note">Latest available price</span>
+            </article>
+
+        </div>
+
+        {% if comparison_result.chart %}
+
+        <div class="panel chart-panel">
+
+            <h2>Historical Price Comparison</h2>
+
+            <img
+                src="{{ url_for('static', filename=comparison_result.chart) }}"
+                alt="Stock comparison chart"
+                class="comparison-chart">
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% else %}
+
+    <section class="panel comparison-placeholder">
+
+        <div class="empty-icon">📊</div>
+
+        <h2>Your Comparison Appears Here</h2>
+
+        <p class="muted-text">
+            Select two stock symbols and submit the form
+            to view their comparison.
+        </p>
+
+    </section>
+
+    {% endif %}
+
+    <!-- Disclaimer -->
+    <div class="disclaimer-box">
+        <strong>Note:</strong>
+        Stock prices can have different currencies and share values.
+        Compare percentage returns as well as absolute prices when
+        evaluating performance.
+    </div>
+
+</section>
+
+{% endblock %}

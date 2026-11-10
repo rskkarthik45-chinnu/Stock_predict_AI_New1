@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Prediction | StockPredictAI{% endblock %}
+
+{% block content %}
+
+<section class="prediction-page">
+
+    <!-- Page Heading -->
+    <div class="page-header">
+        <p class="section-label">MACHINE LEARNING</p>
+
+        <h1>Stock Price <span class="green-text">Prediction</span></h1>
+
+        <p class="muted-text">
+            Explore historical stock data and generate price predictions.
+        </p>
+    </div>
+
+    <!-- Prediction Form -->
+    <div class="prediction-layout">
+
+        <section class="panel prediction-form-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Configure Prediction</h2>
+
+                    <p class="muted-text">
+                        Select a stock and prediction period.
+                    </p>
+                </div>
+
+                <span class="panel-icon">📈</span>
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('prediction') }}"
+                  class="prediction-form">
+
+                <div class="input-group">
+                    <label for="symbol">Stock Symbol</label>
+
+                    <input
+                        type="text"
+                        id="symbol"
+                        name="symbol"
+                        value="{{ request.args.get('symbol', '') }}"
+                        placeholder="Example: AAPL or RELIANCE.NS"
+                        maxlength="20"
+                        pattern="[A-Za-z0-9.^_-]+"
+                        title="Enter a valid stock symbol"
+                        required>
+
+                    <small>
+                        Examples: AAPL, MSFT, GOOGL, RELIANCE.NS
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <label for="period">Historical Data Period</label>
+
+                    <select id="period" name="period" required>
+                        <option value="6mo">Last 6 Months</option>
+                        <option value="1y" selected>Last 1 Year</option>
+                        <option value="2y">Last 2 Years</option>
+                        <option value="5y">Last 5 Years</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="days">Prediction Horizon</label>
+
+                    <select id="days" name="days" required>
+                        <option value="1">Next 1 Trading Day</option>
+                        <option value="5" selected>Next 5 Trading Days</option>
+                        <option value="10">Next 10 Trading Days</option>
+                        <option value="20">Next 20 Trading Days</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="login-button">
+                    GENERATE PREDICTION <span>→</span>
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- Information Panel -->
+        <aside class="panel prediction-info-panel">
+
+            <div class="info-icon">🧠</div>
+
+            <h2>AI Prediction Engine</h2>
+
+            <p class="muted-text">
+                The application will analyze historical market data
+                and use a trained machine learning model to estimate
+                future stock prices.
+            </p>
+
+            <div class="info-list">
+
+                <div class="info-item">
+                    <span class="info-check">✓</span>
+
+                    <div>
+                        <h3>Historical Data</h3>
+                        <p>Analyze past stock prices.</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-check">✓</span>
+
+                    <div>
+                        <h3>Machine Learning</h3>
+                        <p>Generate model-based estimates.</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-check">✓</span>
+
+                    <div>
+                        <h3>Visual Analysis</h3>
+                        <p>Compare historical and predicted prices.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="info-warning">
+                Predictions are estimates, not guaranteed market prices.
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- Future Prediction Results -->
+    {% if result %}
+
+    <section class="panel prediction-results">
+
+        <div class="panel-heading">
+            <div>
+                <p class="section-label">PREDICTION RESULTS</p>
+
+                <h2>{{ result.symbol }}</h2>
+            </div>
+
+            <span class="status-badge">MODEL OUTPUT</span>
+        </div>
+
+        <div class="statistics-grid">
+
+            <article class="stat-card">
+                <p>Latest Price</p>
+
+                <h3>
+                    {{ result.current_price }}
+                </h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Predicted Price</p>
+
+                <h3 class="green-text">
+                    {{ result.predicted_price }}
+                </h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Estimated Change</p>
+
+                <h3 class="green-text">
+                    {{ result.change_percent }}%
+                </h3>
+            </article>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

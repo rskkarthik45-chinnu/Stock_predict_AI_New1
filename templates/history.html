@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Prediction History</h1>
+    <p>Your previous stock predictions</p>
+</div>
+
+<div class="panel">
+
+    {% if predictions %}
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Stock</th>
+                    <th>Current Price</th>
+                    <th>Predicted Price</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in predictions %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.symbol }}</td>
+                    <td>{{ "%.2f"|format(item.current_price) }}</td>
+                    <td>{{ "%.2f"|format(item.predicted_price) }}</td>
+                    <td>
+                        {% if item.prediction_date %}
+                            {{ item.prediction_date.strftime("%d-%m-%Y %H:%M") }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <h2>No Predictions Yet</h2>
+        <p>Generate a stock prediction to see it here.</p>
+
+        <a href="{{ url_for('prediction') }}" class="btn btn-primary">
+            Generate Prediction
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

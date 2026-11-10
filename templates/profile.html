@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | StockPredictAI{% endblock %}
+
+{% block content %}
+
+<section class="profile-page">
+
+    <div class="page-header">
+        <p class="section-label">ACCOUNT SETTINGS</p>
+
+        <h1>My <span class="green-text">Profile</span></h1>
+
+        <p class="muted-text">
+            View your StockPredictAI account information.
+        </p>
+    </div>
+
+    <section class="panel profile-panel">
+
+        <div class="profile-header">
+
+            <div class="profile-avatar">
+                {{ current_user.name[0]|upper }}
+            </div>
+
+            <div>
+                <h2>{{ current_user.name }}</h2>
+
+                <p class="muted-text">
+                    StockPredictAI Member
+                </p>
+
+                <span class="status-badge">
+                    ACTIVE ACCOUNT
+                </span>
+            </div>
+
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-details">
+
+            <div class="profile-detail">
+                <span>Full Name</span>
+
+                <strong>{{ current_user.name }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Email Address</span>
+
+                <strong>{{ current_user.email }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Account Created</span>
+
+                <strong>
+                    {{ current_user.created_at.strftime("%d %B %Y") }}
+                </strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Account ID</span>
+
+                <strong>#{{ current_user.id }}</strong>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+
+            <a href="{{ url_for('dashboard') }}" class="primary-button">
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </section>
+
+    <div class="disclaimer-box">
+        Keep your account credentials private and never share your password.
+    </div>
+
+</section>
+
+{% endblock %}

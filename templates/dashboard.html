@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | StockPredictAI{% endblock %}
+
+{% block content %}
+
+<section class="dashboard">
+
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div>
+            <p class="section-label">OVERVIEW</p>
+
+            <h1>
+                Welcome back,
+                <span>{{ current_user.name }}</span> 👋
+            </h1>
+
+            <p class="muted-text">
+                Track stocks, explore market trends, and make data-driven predictions.
+            </p>
+        </div>
+
+        <a href="{{ url_for('prediction') }}" class="primary-button">
+            + New Prediction
+        </a>
+    </div>
+
+    <!-- Market Overview -->
+    <section class="market-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Market Overview</h2>
+                <p class="muted-text">
+                    Select a stock to explore its price history.
+                </p>
+            </div>
+
+            <span class="status-badge">
+                STOCK INSIGHTS
+            </span>
+        </div>
+
+        <div class="market-grid">
+
+            <article class="stock-card">
+                <div class="stock-card-top">
+                    <span class="stock-symbol">AAPL</span>
+                    <span class="stock-icon">🍎</span>
+                </div>
+
+                <h3>Apple Inc.</h3>
+
+                <p class="stock-description">
+                    Consumer Technology
+                </p>
+
+                <a href="{{ url_for('prediction', symbol='AAPL') }}"
+                   class="stock-link">
+                    Predict Price →
+                </a>
+            </article>
+
+            <article class="stock-card">
+                <div class="stock-card-top">
+                    <span class="stock-symbol">MSFT</span>
+                    <span class="stock-icon">💻</span>
+                </div>
+
+                <h3>Microsoft</h3>
+
+                <p class="stock-description">
+                    Software & Technology
+                </p>
+
+                <a href="{{ url_for('prediction', symbol='MSFT') }}"
+                   class="stock-link">
+                    Predict Price →
+                </a>
+            </article>
+
+            <article class="stock-card">
+                <div class="stock-card-top">
+                    <span class="stock-symbol">GOOGL</span>
+                    <span class="stock-icon">🔎</span>
+                </div>
+
+                <h3>Alphabet Inc.</h3>
+
+                <p class="stock-description">
+                    Internet & Technology
+                </p>
+
+                <a href="{{ url_for('prediction', symbol='GOOGL') }}"
+                   class="stock-link">
+                    Predict Price →
+                </a>
+            </article>
+
+            <article class="stock-card">
+                <div class="stock-card-top">
+                    <span class="stock-symbol">TSLA</span>
+                    <span class="stock-icon">🚗</span>
+                </div>
+
+                <h3>Tesla Inc.</h3>
+
+                <p class="stock-description">
+                    Electric Vehicles
+                </p>
+
+                <a href="{{ url_for('prediction', symbol='TSLA') }}"
+                   class="stock-link">
+                    Predict Price →
+                </a>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- Statistics -->
+    <section class="statistics-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Your Activity</h2>
+                <p class="muted-text">
+                    Your prediction activity in this application.
+                </p>
+            </div>
+        </div>
+
+        <div class="statistics-grid">
+
+            <article class="stat-card">
+                <p>Total Predictions</p>
+
+                <h3>{{ recent_predictions|length }}</h3>
+
+                <span class="stat-note">
+                    Latest five records shown below
+                </span>
+            </article>
+
+            <article class="stat-card">
+                <p>Account Status</p>
+
+                <h3 class="green-text">Active</h3>
+
+                <span class="stat-note">
+                    Signed in successfully
+                </span>
+            </article>
+
+            <article class="stat-card">
+                <p>Prediction Tools</p>
+
+                <h3>Available</h3>
+
+                <span class="stat-note">
+                    Model integration comes next
+                </span>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- Recent Predictions -->
+    <section class="recent-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Recent Predictions</h2>
+
+                <p class="muted-text">
+                    Your latest saved prediction records.
+                </p>
+            </div>
+
+            <a href="{{ url_for('history') }}" class="text-link">
+                View History →
+            </a>
+        </div>
+
+        {% if recent_predictions %}
+
+        <div class="table-wrapper">
+
+            <table class="stock-table">
+
+                <thead>
+                    <tr>
+                        <th>Stock</th>
+                        <th>Current Price</th>
+                        <th>Predicted Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in recent_predictions %}
+
+                    <tr>
+                        <td>
+                            <span class="table-symbol">
+                                {{ item.symbol }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(item.current_price) }}
+                        </td>
+
+                        <td class="green-text">
+                            {{ "%.2f"|format(item.predicted_price) }}
+                        </td>
+
+                        <td>
+                            {{ item.prediction_date.strftime("%d-%m-%Y") }}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <div class="empty-icon">📊</div>
+
+            <h3>No predictions yet</h3>
+
+            <p>
+                Your saved stock predictions will appear here.
+            </p>
+
+            <a href="{{ url_for('prediction') }}"
+               class="primary-button">
+                Start Your First Prediction
+            </a>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer-box">
+        <strong>Important:</strong>
+        Stock price predictions are estimates based on historical data.
+        They are not guaranteed future prices or financial advice.
+    </div>
+
+</section>
+
+{% endblock %}
