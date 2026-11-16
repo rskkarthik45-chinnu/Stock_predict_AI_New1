@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | StockPredict AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>
+            <i class="fas fa-chart-line"></i>
+            StockPredict AI
+        </h2>
+
+        <a href="{{ url_for('admin_dashboard') }}" class="active">
+            <i class="fas fa-home"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('manage_users') }}">
+            <i class="fas fa-users"></i>
+            Manage Users
+        </a>
+
+        <a href="{{ url_for('admin_prediction_history') }}">
+            <i class="fas fa-chart-bar"></i>
+            Predictions
+        </a>
+
+        <a href="{{ url_for('manage_users') }}">
+            <i class="fas fa-user-cog"></i>
+            User Management
+        </a>
+
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Welcome to StockPredict AI Administration Panel</p>
+            </div>
+
+            <div class="admin-info">
+
+                <i class="fas fa-user-shield"></i>
+
+                <span>Administrator</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- DASHBOARD STATISTICS -->
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+
+                <h3>Total Users</h3>
+
+                <h2>{{ total_users }}</h2>
+
+                <p>Registered Users</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+
+                <h3>Active Users</h3>
+
+                <h2>{{ active_users }}</h2>
+
+                <p>Currently Active</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+
+                <h3>Blocked Users</h3>
+
+                <h2>{{ blocked_users }}</h2>
+
+                <p>Restricted Accounts</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+
+                <h3>Total Predictions</h3>
+
+                <h2>{{ total_predictions }}</h2>
+
+                <p>Stock Predictions</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="content-box">
+
+            <h2>
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </h2>
+
+            <div class="quick-actions">
+
+                <a href="{{ url_for('manage_users') }}"
+                   class="action-card">
+
+                    <i class="fas fa-users"></i>
+
+                    <h3>Manage Users</h3>
+
+                    <p>View and manage registered users.</p>
+
+                </a>
+
+
+                <a href="{{ url_for('admin_prediction_history') }}"
+                   class="action-card">
+
+                    <i class="fas fa-chart-bar"></i>
+
+                    <h3>View Predictions</h3>
+
+                    <p>Check all stock prediction records.</p>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT USERS -->
+
+        <div class="content-box">
+
+            <div class="section-header">
+
+                <h2>
+                    <i class="fas fa-user-friends"></i>
+                    Recent Registered Users
+                </h2>
+
+                <a href="{{ url_for('manage_users') }}"
+                   class="btn btn-primary">
+
+                    View All Users
+
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Registered Date</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for user in recent_users %}
+
+                        <tr>
+
+                            <td>{{ user.id }}</td>
+
+                            <td>{{ user.name }}</td>
+
+                            <td>{{ user.email }}</td>
+
+                            <td>
+
+                                {% if user.is_blocked %}
+
+                                <span class="status blocked">
+                                    Blocked
+                                </span>
+
+                                {% else %}
+
+                                <span class="status active">
+                                    Active
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ user.created_at.strftime('%d-%m-%Y') }}
+                            </td>
+
+                            <td>
+
+                                <a href="{{ url_for('user_details', user_id=user.id) }}"
+                                   class="btn btn-primary">
+
+                                    View
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td colspan="6">
+                                No registered users found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                © 2026 StockPredict AI |
+                Admin Control Panel
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+</body>
+
+</html>

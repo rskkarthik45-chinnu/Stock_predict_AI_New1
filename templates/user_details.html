@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Details | StockPredict AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>
+            <i class="fas fa-chart-line"></i>
+            StockPredict AI
+        </h2>
+
+        <a href="{{ url_for('admin_dashboard') }}">
+            <i class="fas fa-home"></i>
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('manage_users') }}" class="active">
+            <i class="fas fa-users"></i>
+            Manage Users
+        </a>
+
+        <a href="{{ url_for('admin_prediction_history') }}">
+            <i class="fas fa-chart-bar"></i>
+            Predictions
+        </a>
+
+        <form action="{{ url_for('logout') }}" method="POST">
+
+            <button type="submit" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+
+        <!-- HEADER -->
+
+        <div class="topbar">
+
+            <div>
+                <h1>User Details</h1>
+
+                <p>
+                    View individual user information and prediction records.
+                </p>
+            </div>
+
+            <div class="admin-info">
+
+                <i class="fas fa-user-shield"></i>
+                Administrator
+
+            </div>
+
+        </div>
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% for category, message in messages %}
+
+                <div class="flash-message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+        <!-- USER INFORMATION -->
+
+        <div class="content-box">
+
+            <h2>
+                <i class="fas fa-user-circle"></i>
+                Personal Information
+            </h2>
+
+            <div class="user-details-grid">
+
+                <div class="detail-item">
+
+                    <label>User ID</label>
+
+                    <h3>{{ user.id }}</h3>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>Full Name</label>
+
+                    <h3>{{ user.name }}</h3>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>Email Address</label>
+
+                    <h3>{{ user.email }}</h3>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>Account Status</label>
+
+                    {% if user.is_blocked %}
+
+                        <span class="status blocked">
+                            Blocked
+                        </span>
+
+                    {% else %}
+
+                        <span class="status active">
+                            Active
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>Registration Date</label>
+
+                    <h3>
+                        {{ user.created_at.strftime('%d-%m-%Y') }}
+                    </h3>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>Account Role</label>
+
+                    <h3>{{ user.role }}</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- USER ACTIONS -->
+
+        <div class="content-box">
+
+            <h2>
+                <i class="fas fa-user-cog"></i>
+                Account Management
+            </h2>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+
+                <!-- BLOCK / UNBLOCK -->
+
+                <form
+                    action="{{ url_for('toggle_user', user_id=user.id) }}"
+                    method="POST"
+                    onsubmit="return confirm('Change this account status?');"
+                >
+
+                    {% if user.is_blocked %}
+
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="fas fa-unlock"></i>
+                            Unblock User
+
+                        </button>
+
+                    {% else %}
+
+                        <button type="submit" class="btn btn-warning">
+
+                            <i class="fas fa-ban"></i>
+                            Block User
+
+                        </button>
+
+                    {% endif %}
+
+                </form>
+
+
+                <!-- DELETE -->
+
+                <form
+                    action="{{ url_for('delete_user', user_id=user.id) }}"
+                    method="POST"
+                    onsubmit="return confirm('Permanently delete this user?');"
+                >
+
+                    <button type="submit" class="btn btn-danger">
+
+                        <i class="fas fa-trash"></i>
+                        Delete User
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- USER PREDICTION STATISTICS -->
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+
+                <h3>Total Predictions</h3>
+
+                <h2>{{ predictions|length }}</h2>
+
+                <p>User prediction records</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PREDICTION HISTORY -->
+
+        <div class="content-box">
+
+            <h2>
+                <i class="fas fa-history"></i>
+                User Prediction History
+            </h2>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Stock Symbol</th>
+
+                            <th>Current Price</th>
+
+                            <th>Predicted Price</th>
+
+                            <th>Prediction Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for prediction in predictions %}
+
+                        <tr>
+
+                            <td>
+                                {{ prediction.id }}
+                            </td>
+
+                            <td>
+                                {{ prediction.symbol }}
+                            </td>
+
+                            <td>
+                                {{ "%.2f"|format(prediction.current_price) }}
+                            </td>
+
+                            <td>
+                                {{ "%.2f"|format(prediction.predicted_price) }}
+                            </td>
+
+                            <td>
+                                {{ prediction.prediction_date.strftime('%d-%m-%Y %H:%M') }}
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td colspan="5" style="text-align:center;">
+
+                                No prediction history available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BACK BUTTON -->
+
+        <div style="margin-top:25px;">
+
+            <a href="{{ url_for('manage_users') }}"
+               class="btn btn-primary">
+
+                <i class="fas fa-arrow-left"></i>
+                Back to Manage Users
+
+            </a>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                © 2026 StockPredict AI | Admin Control Panel
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+</body>
+
+</html>
